@@ -22,8 +22,31 @@ jobs:
         with:
           node-version: '20'
       
+      # DEBUG: Check what files actually exist
+      - name: Verify sonner file exists
+        run: |
+          echo "=== Checking src/components/ui/ ==="
+          ls -la src/components/ui/ | grep -i sonner || echo "No sonner file found!"
+          echo "=== Checking exact filename case ==="
+          find src/components/ui -name "*sonner*" -o -name "*Sonner*"
+          echo "=== Git status (check if file is tracked) ==="
+          git ls-files | grep -i sonner || echo "Not tracked by git!"
+      
+      - name: Clear caches
+        run: |
+          rm -rf node_modules/.vite
+          rm -rf dist
+      
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+      
+      # If sonner is missing, install it
+      - name: Install sonner if missing
+        run: |
+          if [ ! -f "src/components/ui/sonner.tsx" ] && [ ! -f "src/components/ui/sonner.jsx" ]; then
+            echo "Sonner component missing, installing..."
+            npx shadcn@latest add sonner -y
+          fi
       
       - name: Build project
         run: npm run build
@@ -31,7 +54,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist  # ← This uploads the CONTENTS of dist
+          path: ./dist
 
   deploy:
     environment:
