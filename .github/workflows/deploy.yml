@@ -21,10 +21,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'  # Enable caching
       
       - name: Install dependencies
-        run: npm install  # Use install instead of ci for now
+        run: npm install
+      
+      # DEBUG: Check if sonner file exists and show vite config
+      - name: Debug file structure
+        run: |
+          echo "=== Checking sonner file ==="
+          ls -la src/components/ui/ | grep -i sonner || echo "NOT FOUND"
+          echo "=== Checking vite.config.ts ==="
+          cat vite.config.ts
+          echo "=== Checking tsconfig.json paths ==="
+          cat tsconfig.json | grep -A 5 '"paths"'
       
       - name: Build project
         run: npm run build
