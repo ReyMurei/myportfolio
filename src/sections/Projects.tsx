@@ -1,13 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ExternalLink, Github, ArrowLeft } from 'lucide-react';
+import { ExternalLink, Github, FileText, ArrowRight, X } from 'lucide-react';
 
 const projects = [
   {
     id: 1,
     title: 'Sales Performance Dashboard',
-    description: 'Interactive Power BI dashboard analyzing $10M+ in sales data...',
+    description: 'Interactive Power BI dashboard analyzing $10M+ in sales data, identifying key trends, seasonal patterns, and regional performance metrics.',
+    // Add full content for detail view
     content: `
 ## Project Overview
 
@@ -17,10 +18,12 @@ Built a comprehensive sales analytics solution that transformed how executives u
 - Real-time data refresh from SQL Server
 - Drill-through capabilities from summary to transaction level
 - Custom DAX measures for YoY and MoM comparisons
+- Role-based security for regional access
 
 ## Business Impact
 - Reduced reporting time from 3 days to real-time
 - Identified $2M in underperforming product lines
+- Enabled data-driven decisions across 5 regional offices
     `,
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
     tags: ['Power BI', 'SQL', 'DAX', 'Excel'],
@@ -28,7 +31,74 @@ Built a comprehensive sales analytics solution that transformed how executives u
     githubUrl: '#',
     featured: true,
   },
-  // ... other projects with content field
+  // ... rest of your projects with added `content` field
+  {
+    id: 2,
+    title: 'Customer Churn Prediction',
+    description: 'Machine learning model using Python and scikit-learn to predict customer churn with 89% accuracy, reducing retention costs by 25%.',
+    content: `
+## The Challenge
+Subscription-based SaaS losing 15% customers annually.
+
+## Solution
+Random Forest classifier with 89% precision and 85% recall.
+
+## Tech Stack
+- Python, Pandas, scikit-learn
+- Feature engineering on 50K records
+- Automated retraining pipeline
+    `,
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+    tags: ['Python', 'scikit-learn', 'Pandas', 'Matplotlib'],
+    liveUrl: '#',
+    githubUrl: '#',
+    featured: true,
+  },
+  // Add content to remaining projects...
+  {
+    id: 3,
+    title: 'Market Segmentation Analysis',
+    description: 'K-means clustering analysis on 50K+ customer records to identify distinct segments, enabling targeted marketing campaigns.',
+    content: 'Detailed clustering methodology and marketing strategy recommendations...',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
+    tags: ['R', 'K-means', 'ggplot2', 'Statistics'],
+    liveUrl: '#',
+    githubUrl: '#',
+    featured: false,
+  },
+  {
+    id: 4,
+    title: 'Financial Forecasting Model',
+    description: 'Time series analysis using ARIMA and Prophet to forecast quarterly revenue with 95% confidence intervals for budget planning.',
+    content: 'Comprehensive forecasting methodology and budget planning integration...',
+    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=600&fit=crop',
+    tags: ['Python', 'Prophet', 'ARIMA', 'Tableau'],
+    liveUrl: '#',
+    githubUrl: '#',
+    featured: false,
+  },
+  {
+    id: 5,
+    title: 'Supply Chain Optimization',
+    description: 'SQL-based analysis of inventory data identifying bottlenecks, reducing stockouts by 30% and saving $500K annually.',
+    content: 'SQL optimization strategies and inventory management improvements...',
+    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=600&fit=crop',
+    tags: ['SQL', 'Python', 'Pandas', 'Looker'],
+    liveUrl: '#',
+    githubUrl: '#',
+    featured: false,
+  },
+  {
+    id: 6,
+    title: 'A/B Testing Framework',
+    description: 'Statistical hypothesis testing framework for product experiments, analyzing conversion rates and user behavior at scale.',
+    content: 'Statistical methodology and experimentation platform architecture...',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+    tags: ['Python', 'SciPy', 'Statsmodels', 'BigQuery'],
+    liveUrl: '#',
+    githubUrl: '#',
+    featured: false,
+  },
 ];
 
 const categories = ['All', 'Visualization', 'Machine Learning', 'Statistical Analysis'];
@@ -37,113 +107,101 @@ export default function Projects() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
 
-  // Scroll to top when opening project
-  useEffect(() => {
-    if (selectedProject) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [selectedProject]);
-
   const filteredProjects = activeCategory === 'All' 
     ? projects 
     : projects.filter(p => {
-        if (activeCategory === 'Visualization') return p.tags.some(t => ['Power BI', 'Tableau', 'Looker'].includes(t));
-        if (activeCategory === 'Machine Learning') return p.tags.some(t => ['scikit-learn', 'K-means', 'Prophet'].includes(t));
-        if (activeCategory === 'Statistical Analysis') return p.tags.some(t => ['Statistics', 'Statsmodels'].includes(t));
+        if (activeCategory === 'Visualization') return p.tags.some(t => ['Power BI', 'Tableau', 'Looker', 'Matplotlib', 'ggplot2'].includes(t));
+        if (activeCategory === 'Machine Learning') return p.tags.some(t => ['scikit-learn', 'K-means', 'Prophet', 'ARIMA', 'SciPy'].includes(t));
+        if (activeCategory === 'Statistical Analysis') return p.tags.some(t => ['Statistics', 'Statsmodels', 'A/B Testing'].includes(t));
         return true;
       });
 
-  // FULL PAGE VIEW - Takes over entire screen
+  // DETAIL VIEW - shown when a project is selected
   if (selectedProject) {
     return (
-      <div className="min-h-screen bg-background">
-        {/* Fixed navbar/header */}
-        <div className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
-          <div className="max-w-6xl mx-auto px-4 py-4">
-            <Button 
-              variant="ghost" 
-              onClick={() => setSelectedProject(null)}
-              className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Projects
-            </Button>
-          </div>
-        </div>
+      <section id="projects" className="py-24 px-4 relative">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
+        
+        <div className="max-w-4xl mx-auto">
+          {/* Back Button */}
+          <Button 
+            variant="ghost" 
+            onClick={() => setSelectedProject(null)}
+            className="mb-6 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+          >
+            ← Back to Projects
+          </Button>
 
-        {/* Full width content - no section constraints */}
-        <main className="w-full">
-          {/* Hero Image - Full bleed */}
-          <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+          {/* Project Detail Card */}
+          <article className="bg-white dark:bg-card rounded-2xl border border-gray-200 dark:border-border overflow-hidden shadow-sm">
             <img 
               src={selectedProject.image} 
               alt={selectedProject.title}
-              className="w-full h-full object-cover"
+              className="w-full h-64 md:h-96 object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
             
-            {/* Title overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12">
-              <div className="max-w-4xl mx-auto">
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {selectedProject.featured && (
-                    <Badge className="bg-emerald-600 text-white">Featured</Badge>
-                  )}
+            <div className="p-8 md:p-12">
+              {/* Meta Info */}
+              <div className="flex items-center gap-4 mb-6 flex-wrap">
+                <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+                  {selectedProject.featured ? 'Featured Project' : 'Project'}
+                </Badge>
+                <div className="flex gap-2">
                   {selectedProject.tags.map((tag) => (
-                    <Badge 
-                      key={tag} 
-                      variant="secondary"
-                      className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                    <span
+                      key={tag}
+                      className="px-3 py-1 text-xs rounded-full bg-gray-100 dark:bg-emerald-500/10 text-gray-600 dark:text-emerald-400 border border-gray-200 dark:border-emerald-500/20"
                     >
                       {tag}
-                    </Badge>
+                    </span>
                   ))}
                 </div>
-                <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-                  {selectedProject.title}
-                </h1>
-                <p className="text-xl text-white/80 max-w-2xl">
-                  {selectedProject.description}
-                </p>
+              </div>
+
+              {/* Title */}
+              <h1 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-foreground">
+                {selectedProject.title}
+              </h1>
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 mb-8 pb-8 border-b border-gray-100 dark:border-border">
+                <a
+                  href={selectedProject.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-medium hover:opacity-90 transition-opacity"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  View Live Demo
+                </a>
+                <a
+                  href={selectedProject.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-gray-300 dark:border-border text-gray-700 dark:text-foreground font-medium hover:bg-gray-50 dark:hover:bg-emerald-500/10 transition-colors"
+                >
+                  <Github className="w-4 h-4" />
+                  View Code
+                </a>
+              </div>
+
+              {/* Description */}
+              <p className="text-lg text-gray-600 dark:text-muted-foreground mb-8 leading-relaxed">
+                {selectedProject.description}
+              </p>
+
+              {/* Full Content */}
+              <div className="prose prose-lg max-w-none text-gray-700 dark:text-muted-foreground leading-relaxed whitespace-pre-line">
+                {selectedProject.content}
               </div>
             </div>
-          </div>
-
-          {/* Content area */}
-          <div className="max-w-4xl mx-auto px-4 py-12 md:py-16">
-            {/* Action buttons */}
-            <div className="flex flex-wrap gap-4 mb-12">
-              <a
-                href={selectedProject.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-medium hover:opacity-90 transition-opacity"
-              >
-                <ExternalLink className="w-4 h-4" />
-                View Live Demo
-              </a>
-              <a
-                href={selectedProject.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-border text-foreground font-medium hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-colors"
-              >
-                <Github className="w-4 h-4" />
-                View Code
-              </a>
-            </div>
-
-            {/* Full content */}
-            <div className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground leading-relaxed whitespace-pre-line">
-              {selectedProject.content}
-            </div>
-          </div>
-        </main>
-      </div>
+          </article>
+        </div>
+      </section>
     );
   }
 
-  // GRID VIEW - Your existing section (unchanged)
+  // LIST VIEW - default view with grid
   return (
     <section id="projects" className="py-24 px-4 relative">
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
@@ -190,6 +248,7 @@ export default function Projects() {
               className="group cursor-pointer relative bg-card rounded-2xl overflow-hidden border border-border/50 hover:border-emerald-500/30 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/10"
               style={{ animationDelay: `${index * 100}ms` }}
             >
+              {/* Image */}
               <div className="relative aspect-video overflow-hidden">
                 <img
                   src={project.image}
@@ -198,19 +257,22 @@ export default function Projects() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent opacity-60" />
                 
+                {/* Featured Badge */}
                 {project.featured && (
                   <Badge className="absolute top-4 left-4 bg-emerald-600/90 text-white">
                     Featured
                   </Badge>
                 )}
 
+                {/* Hover Overlay - Changed to "View Details" */}
                 <div className="absolute inset-0 bg-emerald-600/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <span className="text-white font-medium flex items-center gap-2">
-                    View Project <ArrowLeft className="w-4 h-4 rotate-180" />
-                  </span>
+                  <div className="flex items-center gap-2 text-white font-medium">
+                    View Details <ArrowRight className="w-4 h-4" />
+                  </div>
                 </div>
               </div>
 
+              {/* Content */}
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-2 group-hover:text-emerald-400 transition-colors">
                   {project.title}
@@ -219,7 +281,7 @@ export default function Projects() {
                   {project.description}
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {project.tags.slice(0, 3).map((tag) => (
+                  {project.tags.map((tag) => (
                     <span
                       key={tag}
                       className="px-3 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
@@ -231,6 +293,17 @@ export default function Projects() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* View More */}
+        <div className="text-center mt-12">
+          <Button
+            variant="outline"
+            size="lg"
+            className="border-emerald-500/50 hover:bg-emerald-500/10"
+          >
+            View All Projects
+          </Button>
         </div>
       </div>
     </section>
