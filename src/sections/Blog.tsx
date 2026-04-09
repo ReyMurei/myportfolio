@@ -226,10 +226,7 @@ export default function Blog() {
       }
     };
 
-    // Check on mount
     handleHashChange();
-
-    // Listen for hash changes
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
@@ -267,7 +264,7 @@ export default function Blog() {
 
   return (
     <>
-      {/* FULL PAGE VIEW - When a post is selected */}
+      {/* FULL PAGE VIEW */}
       {selectedPost && (
         <div className="fixed inset-0 z-[9999] bg-background overflow-y-auto">
           {/* Back Button */}
@@ -284,39 +281,38 @@ export default function Blog() {
           </div>
 
           <article className="min-h-screen">
-            {/* Hero Image - Clean, no bottom fade */}
-            <div className="relative h-[60vh] w-full overflow-hidden">
+            {/* Hero Image - NO FADE, clean edges */}
+            <div className="relative h-[50vh] w-full overflow-hidden">
               <img 
                 src={selectedPost.image} 
                 alt={selectedPost.title}
                 className="w-full h-full object-cover"
               />
-              {/* Only top gradient for readability */}
-              <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-transparent to-transparent" />
-              
-              {/* Title overlay */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 lg:p-16">
-                <div className="max-w-4xl mx-auto">
-                  <div className="flex flex-wrap items-center gap-3 mb-4">
-                    <Badge className="bg-emerald-600 text-white text-sm px-3 py-1">
-                      {selectedPost.category}
-                    </Badge>
-                    <span className="text-white/80 text-sm flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {selectedPost.date}
-                    </span>
-                    <span className="text-white/80 text-sm flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      {selectedPost.readTime}
-                    </span>
-                  </div>
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 leading-tight drop-shadow-lg">
-                    {selectedPost.title}
-                  </h1>
-                  <p className="text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed drop-shadow-md">
-                    {selectedPost.excerpt}
-                  </p>
+              {/* NO gradient overlay - image is clean */}
+            </div>
+
+            {/* Title Section - Below image, not overlaid */}
+            <div className="bg-background border-b border-border">
+              <div className="max-w-4xl mx-auto px-6 md:px-12 py-8 md:py-12">
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                  <Badge className="bg-emerald-600 text-white text-sm px-3 py-1">
+                    {selectedPost.category}
+                  </Badge>
+                  <span className="text-muted-foreground text-sm flex items-center gap-1">
+                    <Calendar className="w-4 h-4" />
+                    {selectedPost.date}
+                  </span>
+                  <span className="text-muted-foreground text-sm flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    {selectedPost.readTime}
+                  </span>
                 </div>
+                <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 leading-tight">
+                  {selectedPost.title}
+                </h1>
+                <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
+                  {selectedPost.excerpt}
+                </p>
               </div>
             </div>
 
@@ -359,7 +355,7 @@ export default function Blog() {
         </div>
       )}
 
-      {/* GRID VIEW - Normal section */}
+      {/* GRID VIEW */}
       <section id="blog" className="py-24 px-4 relative">
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
 
@@ -465,7 +461,6 @@ export default function Blog() {
                     alt={post.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   
                   {/* Hover "Read Article" */}
                   <div className="absolute inset-0 bg-emerald-600/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
