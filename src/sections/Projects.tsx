@@ -1,13 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ExternalLink, Github, ArrowLeft } from 'lucide-react';
+import { ExternalLink, Github, ArrowLeft, ArrowRight } from 'lucide-react';
+
+// Helper function to create URL-friendly slug from title
+function createSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-')         // Replace spaces with hyphens
+    .replace(/-+/g, '-');          // Remove multiple consecutive hyphens
+}
 
 const projects = [
   {
     id: 1,
     title: 'Sales Performance Dashboard',
-    description: 'Interactive Power BI dashboard analyzing $10M+ in sales data...',
+    description: 'Interactive Power BI dashboard analyzing $10M+ in sales data, identifying key trends, seasonal patterns, and regional performance metrics.',
     content: `
 ## Project Overview
 
@@ -17,10 +26,15 @@ Built a comprehensive sales analytics solution that transformed how executives u
 - Real-time data refresh from SQL Server
 - Drill-through capabilities from summary to transaction level
 - Custom DAX measures for YoY and MoM comparisons
+- Role-based security for regional access
 
 ## Business Impact
 - Reduced reporting time from 3 days to real-time
 - Identified $2M in underperforming product lines
+- Enabled data-driven decisions across 5 regional offices
+
+## Technologies Used
+Power BI, SQL Server, DAX, Excel, Python (for data cleaning)
     `,
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
     tags: ['Power BI', 'SQL', 'DAX', 'Excel'],
@@ -28,7 +42,121 @@ Built a comprehensive sales analytics solution that transformed how executives u
     githubUrl: '#',
     featured: true,
   },
-  // ... other projects
+  {
+    id: 2,
+    title: 'Customer Churn Prediction',
+    description: 'Machine learning model using Python and scikit-learn to predict customer churn with 89% accuracy, reducing retention costs by 25%.',
+    content: `
+## The Challenge
+Subscription-based SaaS losing 15% customers annually.
+
+## Solution
+Random Forest classifier with 89% precision and 85% recall.
+
+## Tech Stack
+- Python, Pandas, scikit-learn
+- Feature engineering on 50K records
+- Automated retraining pipeline
+
+## Results
+- 25% reduction in retention costs
+- 12% improvement in customer LTV
+    `,
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+    tags: ['Python', 'scikit-learn', 'Pandas', 'Matplotlib'],
+    liveUrl: '#',
+    githubUrl: '#',
+    featured: true,
+  },
+  {
+    id: 3,
+    title: 'Market Segmentation Analysis',
+    description: 'K-means clustering analysis on 50K+ customer records to identify distinct segments, enabling targeted marketing campaigns.',
+    content: `
+## Methodology
+K-means clustering with elbow method for optimal k selection.
+
+## Segments Identified
+- High-value frequent buyers
+- Price-sensitive occasional shoppers
+- At-risk churners
+- New customer prospects
+
+## Marketing Impact
+- 35% increase in campaign ROI
+- 20% improvement in email open rates
+    `,
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
+    tags: ['R', 'K-means', 'ggplot2', 'Statistics'],
+    liveUrl: '#',
+    githubUrl: '#',
+    featured: false,
+  },
+  {
+    id: 4,
+    title: 'Financial Forecasting Model',
+    description: 'Time series analysis using ARIMA and Prophet to forecast quarterly revenue with 95% confidence intervals for budget planning.',
+    content: `
+## Approach
+Ensemble of ARIMA and Facebook Prophet models.
+
+## Accuracy
+- 95% confidence intervals
+- MAPE under 8% for 3-month forecasts
+
+## Use Cases
+- Budget allocation
+- Headcount planning
+- Investment decisions
+    `,
+    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=600&fit=crop',
+    tags: ['Python', 'Prophet', 'ARIMA', 'Tableau'],
+    liveUrl: '#',
+    githubUrl: '#',
+    featured: false,
+  },
+  {
+    id: 5,
+    title: 'Supply Chain Optimization',
+    description: 'SQL-based analysis of inventory data identifying bottlenecks, reducing stockouts by 30% and saving $500K annually.',
+    content: `
+## Problem
+30% stockout rate causing lost sales and customer dissatisfaction.
+
+## Solution
+SQL analysis identifying reorder point issues and supplier delays.
+
+## Results
+- 30% reduction in stockouts
+- $500K annual savings
+- 15% inventory carrying cost reduction
+    `,
+    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=600&fit=crop',
+    tags: ['SQL', 'Python', 'Pandas', 'Looker'],
+    liveUrl: '#',
+    githubUrl: '#',
+    featured: false,
+  },
+  {
+    id: 6,
+    title: 'A/B Testing Framework',
+    description: 'Statistical hypothesis testing framework for product experiments, analyzing conversion rates and user behavior at scale.',
+    content: `
+## Features
+- Sequential testing (no peeking problems)
+- Automatic sample size calculation
+- Segment-aware analysis
+
+## Scale
+- 50+ experiments running simultaneously
+- 10M+ users in experiment pool
+    `,
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+    tags: ['Python', 'SciPy', 'Statsmodels', 'BigQuery'],
+    liveUrl: '#',
+    githubUrl: '#',
+    featured: false,
+  },
 ];
 
 const categories = ['All', 'Visualization', 'Machine Learning', 'Statistical Analysis'];
@@ -41,10 +169,12 @@ export default function Projects() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      const match = hash.match(/#projects\/(\d+)/);
+      // Match #projects/slug-name pattern
+      const match = hash.match(/#projects\/(.+)/);
       if (match) {
-        const projectId = parseInt(match[1]);
-        const project = projects.find(p => p.id === projectId);
+        const slug = match[1];
+        // Find project by matching slug
+        const project = projects.find(p => createSlug(p.title) === slug);
         if (project) {
           setSelectedProject(project);
         }
@@ -53,10 +183,7 @@ export default function Projects() {
       }
     };
 
-    // Check on mount
     handleHashChange();
-
-    // Listen for hash changes
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
@@ -64,9 +191,9 @@ export default function Projects() {
   // Update URL when project changes
   useEffect(() => {
     if (selectedProject) {
-      window.location.hash = `#projects/${selectedProject.id}`;
+      const slug = createSlug(selectedProject.title);
+      window.location.hash = `#projects/${slug}`;
     } else if (window.location.hash.includes('/')) {
-      // Only reset to #projects if we're in a project detail
       window.location.hash = '#projects';
     }
   }, [selectedProject]);
@@ -86,18 +213,18 @@ export default function Projects() {
   const filteredProjects = activeCategory === 'All' 
     ? projects 
     : projects.filter(p => {
-        if (activeCategory === 'Visualization') return p.tags.some(t => ['Power BI', 'Tableau', 'Looker'].includes(t));
-        if (activeCategory === 'Machine Learning') return p.tags.some(t => ['scikit-learn', 'K-means', 'Prophet'].includes(t));
-        if (activeCategory === 'Statistical Analysis') return p.tags.some(t => ['Statistics', 'Statsmodels'].includes(t));
+        if (activeCategory === 'Visualization') return p.tags.some(t => ['Power BI', 'Tableau', 'Looker', 'Matplotlib', 'ggplot2'].includes(t));
+        if (activeCategory === 'Machine Learning') return p.tags.some(t => ['scikit-learn', 'K-means', 'Prophet', 'ARIMA', 'SciPy'].includes(t));
+        if (activeCategory === 'Statistical Analysis') return p.tags.some(t => ['Statistics', 'Statsmodels', 'A/B Testing'].includes(t));
         return true;
       });
 
   return (
     <>
-      {/* FULL PAGE OVERLAY */}
+      {/* FULL PAGE VIEW */}
       {selectedProject && (
         <div className="fixed inset-0 z-[9999] bg-background overflow-y-auto">
-          {/* Close/Back Button */}
+          {/* Back Button */}
           <div className="fixed top-4 left-4 z-50">
             <Button 
               variant="outline"
@@ -110,48 +237,46 @@ export default function Projects() {
             </Button>
           </div>
 
-          {/* Full Page Content */}
           <div className="min-h-screen">
-            {/* Hero Image - Clean, no bottom fade */}
-            <div className="relative h-[70vh] w-full overflow-hidden">
+            {/* Hero Image - NO FADE, clean edges */}
+            <div className="relative h-[50vh] w-full overflow-hidden">
               <img 
                 src={selectedProject.image} 
                 alt={selectedProject.title}
                 className="w-full h-full object-cover"
               />
-              {/* Only top gradient for text readability, no bottom fade */}
-              <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-transparent to-transparent" />
-              
-              {/* Title overlay */}
-              <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 p-6 md:p-12 lg:p-16">
-                <div className="max-w-5xl mx-auto">
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {selectedProject.featured && (
-                      <Badge className="bg-emerald-600 text-white text-sm px-3 py-1">Featured</Badge>
-                    )}
-                    {selectedProject.tags.map((tag) => (
-                      <Badge 
-                        key={tag} 
-                        variant="secondary"
-                        className="bg-black/50 text-white border border-white/30 text-sm px-3 py-1 backdrop-blur"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                  <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
-                    {selectedProject.title}
-                  </h1>
-                  <p className="text-xl md:text-2xl text-white max-w-3xl leading-relaxed drop-shadow-md">
-                    {selectedProject.description}
-                  </p>
+              {/* NO gradient overlay - clean image */}
+            </div>
+
+            {/* Title Section - Below image */}
+            <div className="bg-background border-b border-border">
+              <div className="max-w-5xl mx-auto px-6 md:px-12 py-8 md:py-12">
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                  {selectedProject.featured && (
+                    <Badge className="bg-emerald-600 text-white text-sm px-3 py-1">Featured</Badge>
+                  )}
+                  {selectedProject.tags.map((tag) => (
+                    <Badge 
+                      key={tag} 
+                      variant="secondary"
+                      className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-sm px-3 py-1"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
                 </div>
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4 leading-tight">
+                  {selectedProject.title}
+                </h1>
+                <p className="text-lg md:text-xl text-muted-foreground max-w-3xl leading-relaxed">
+                  {selectedProject.description}
+                </p>
               </div>
             </div>
 
             {/* Content Section */}
             <div className="bg-background">
-              <div className="max-w-5xl mx-auto px-6 md:px-12 py-16 md:py-24">
+              <div className="max-w-5xl mx-auto px-6 md:px-12 py-12 md:py-16">
                 {/* Action Buttons */}
                 <div className="flex flex-wrap gap-4 mb-16">
                   <a
@@ -233,7 +358,6 @@ export default function Projects() {
                     alt={project.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent opacity-60" />
                   
                   {project.featured && (
                     <Badge className="absolute top-4 left-4 bg-emerald-600/90 text-white">
@@ -243,7 +367,7 @@ export default function Projects() {
 
                   <div className="absolute inset-0 bg-emerald-600/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                     <span className="text-white font-medium flex items-center gap-2 text-lg">
-                      View Project <ArrowLeft className="w-5 h-5 rotate-180" />
+                      View Project <ArrowRight className="w-5 h-5" />
                     </span>
                   </div>
                 </div>
